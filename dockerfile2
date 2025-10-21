@@ -1,0 +1,33 @@
+# 1. 使用官方的 Node.js 環境（版本 22）
+FROM node:22
+
+# 2. 設定維護者資訊（可選）
+LABEL maintainer="linx71203@gmail.com"
+
+# 3. 建立一個工作目錄，叫 /app
+WORKDIR /app
+
+# 4. 設定環境變數（在建置與執行時都會存在）
+ENV TZ Asia/Taipei
+
+# 5. 建構階段參數（可以由 docker build --build-arg 傳入）
+ARG NODE_ENV=development
+
+# 6. 複製 package.json 與 lock（利用快取）
+COPY package*.json ./
+
+# 7. 安裝所有 npm 套件（會裝 express、mysql2、nodemon 等）
+RUN npm install
+
+# 8. 複製所有程式碼進容器
+# COPY . .
+
+# 9. 宣告資料夾可以對外掛載（Volume 可做資料同步）
+VOLUME ["/app"]
+
+# 10. 對外開放 3000 port
+EXPOSE 3000
+
+# 11. 預設啟動方式：nodemon 啟動 index.js（可用 docker run 改覆蓋 CMD 參數）
+ENTRYPOINT ["npm"]
+# CMD ["run", "dev"]
